@@ -97,7 +97,7 @@ app.post('/:encoded_id', function(req, res) {
     if (doc) {
       res.send({'encodedXml': doc.long_url});
     } else {
-      res.send({'error': err});
+      res.sendStatus(404);
     }
   });
 });
