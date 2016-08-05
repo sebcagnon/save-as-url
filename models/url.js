@@ -3,10 +3,28 @@ var Schema = mongoose.Schema;
 
 var CounterSchema = Schema({
     _id: {type: String, required: true},
-    seq: { type: Number, default: 0 }
+    seq: { type: Number, default: 10000 }
 });
 
 var counter = mongoose.model('counter', CounterSchema);
+
+counter.findById('url_count', function (err, count) {
+  if (err) {
+    console.log("Could not retrieve url_count for setup: " + err);
+  } else {
+    if (!count) {
+      console.log("creating url_count document");
+      var url_count = counter({_id:'url_count'});
+      url_count.save(function (err) {
+        if (err) {
+          console.log("Could not save url_count: " + err);
+        } else {
+          console.log("url_count successfully saved");
+        }
+      });
+    }
+  }
+});
 
 // create a schema for our links
 var urlSchema = new Schema({

@@ -4,6 +4,6 @@ config.db = {};
 config.webhost = 'http://localhost:3000/';
 
 config.db.host = 'localhost';
-config.db.name = 'url_shortener';
+config.db.name = 'test_newdb';
 
 module.exports = config;

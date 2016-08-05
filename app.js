@@ -9,7 +9,14 @@ var base58 = require('./base58.js');
 // grab the url model
 var Url = require('./models/url');
 
-mongoose.connect('mongodb://' + config.db.host + '/' + config.db.name);
+var mongo_uri = process.env.MONGODB_URI || 'mongodb://' + config.db.host + '/' + config.db.name;
+mongoose.connect(mongo_uri, function (err, res) {
+  if (err) {
+  console.log ('ERROR connecting to: ' + mongo_uri + '. ' + err);
+  } else {
+  console.log ('Succeeded connected to: ' + mongo_uri);
+  }
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -76,7 +83,7 @@ app.post('/:encoded_id', function(req, res) {
 
   Url.findOne({_id: id}, function(err, doc) {
     if (doc) {
-      res.send({'encodeXml': doc.long_url});
+      res.send({'encodedXml': doc.long_url});
     } else {
       res.send({'error': err});
     }
