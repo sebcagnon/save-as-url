@@ -18,8 +18,18 @@ mongoose.connect(mongo_uri, function (err, res) {
   }
 });
 
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(allowCrossDomain);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,14 +40,16 @@ app.get('/', function(req, res){
 app.post('/api/shorten', function(req, res){
   var longUrl = req.body.url;
   var shortUrl = '';
+  var host_name = process.env.HEROKU_URL || config.webhost;
+        console.log(host_name)
 
   // check if url already exists in database
   Url.findOne({long_url: longUrl}, function (err, doc){
     if (doc){
-      shortUrl = config.webhost + base58.encode(doc._id);
+      shortUrl = host_name + base58.encode(doc._id);
 
       // the document exists, so we return it without creating a new entry
-      res.send({'shortUrl': shortUrl});
+      res.send({'shortUrl': shortUrl, 'subPath': base58.encode(doc._id)});
     } else {
       // since it doesn't exist, let's go ahead and create it:
       var newUrl = Url({
@@ -49,10 +61,10 @@ app.post('/api/shorten', function(req, res){
         if (err){
           console.log(err);
         }
-        var host_name = process.env.HEROKU_URL || config.webhost;
+        
         shortUrl = host_name + base58.encode(newUrl._id);
 
-        res.send({'shortUrl': shortUrl});
+        res.send({'shortUrl': shortUrl, 'subPath': base58.encode(doc._id)});
       });
     }
 
