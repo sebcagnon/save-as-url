@@ -70,6 +70,20 @@ app.get('/:encoded_id', function(req, res){
 
 });
 
-var server = app.listen(3000, function(){
-  console.log('Server listening on port 3000');
+app.post('/:encoded_id', function(req, res) {
+  var base58Id = req.params.encoded_id;
+  var id = base58.decode(base58Id);
+
+  Url.findOne({_id: id}, function(err, doc) {
+    if (doc) {
+      res.send({'encodeXml': doc.long_url});
+    } else {
+      res.send({'error': err});
+    }
+  });
+});
+
+var server = app.listen(process.env.PORT || 3000, function(){
+  var port = process.env.PORT || 3000;
+  console.log('Server listening on port ' + port);
 });
