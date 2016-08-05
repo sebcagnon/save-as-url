@@ -49,8 +49,8 @@ app.post('/api/shorten', function(req, res){
         if (err){
           console.log(err);
         }
-
-        shortUrl = config.webhost + base58.encode(newUrl._id);
+        var host_name = process.env.HEROKU_URL || config.webhost;
+        shortUrl = host_name + base58.encode(newUrl._id);
 
         res.send({'shortUrl': shortUrl});
       });
