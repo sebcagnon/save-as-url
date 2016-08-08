@@ -2,34 +2,29 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var mongoose = require('mongoose');
 var config = require('./config');
 var base58 = require('./base58.js');
 
 // grab the url model
-var Url = require('./models/url');
+var Url;
 
 var mongo_uri = process.env.MONGODB_URI || 'mongodb://' + config.db.host + '/' + config.db.name;
 mongoose.connect(mongo_uri, function (err, res) {
   if (err) {
   console.log ('ERROR connecting to: ' + mongo_uri + '. ' + err);
   } else {
+    Url = require('./models/url');
   console.log ('Succeeded connected to: ' + mongo_uri);
   }
 });
 
 //CORS middleware
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
-    next();
-}
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(allowCrossDomain);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
