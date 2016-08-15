@@ -13,10 +13,10 @@ var Url;
 var mongo_uri = process.env.MONGODB_URI || 'mongodb://' + config.db.host + '/' + config.db.name;
 mongoose.connect(mongo_uri, function (err, res) {
   if (err) {
-  console.log ('ERROR connecting to: ' + mongo_uri + '. ' + err);
+    console.log ('ERROR connecting to: ' + mongo_uri + '. ' + err);
   } else {
     Url = require('./models/url');
-  console.log ('Succeeded connected to: ' + mongo_uri);
+    console.log ('Succeeded connected to: ' + mongo_uri);
   }
 });
 
@@ -55,11 +55,11 @@ app.post('/api/shorten', function(req, res){
       newUrl.save(function(err) {
         if (err){
           console.log(err);
-        }
-        
-        shortUrl = host_name + base58.encode(newUrl._id);
+      }
+      
+      shortUrl = host_name + base58.encode(newUrl._id);
 
-        res.send({'shortUrl': shortUrl, 'subPath': base58.encode(doc._id)});
+      res.send({'shortUrl': shortUrl, 'subPath': base58.encode(newUrl._id)});
       });
     }
 
